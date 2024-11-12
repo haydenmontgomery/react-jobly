@@ -1,11 +1,18 @@
 import React from 'react'
-import Api from './helpers/api'
+import JoblyApi from './helpers/Api'
 import './App.css'
+import NavBar from './NavBar'
+import RouteList from './RouteList';
+
 
 function App() {
 
   return (
     <>
+    <main>
+    <NavBar />
+      <RouteList></RouteList>
+    </main>
     </>
   )
 }
