@@ -57,22 +57,32 @@ class JoblyApi {
     return res.jobs;
   }
 
+  // Apply for a job
+  static async applyToJob(username, id) {
+    await this.request(`users/${username}/jobs/${id}`, {}, "post");
+  }
   /* User signup. Takes {username, password, firstName, lastName, email} */
-  static async signUp({ username, password, firstName, lastName, email } ) {
-    let res = await this.request('auth/register', { username, password, firstName, lastName, email }, "post");
+  static async signUp(data) {
+    let res = await this.request('auth/register', data, "post");
     return res.token;
   }
 
   /* User signup. Takes {username, password, firstName, lastName, email} */
-  static async loginUser({ username, password } ) {
-    let res = await this.request('auth/login', { username, password }, "post");
+  static async loginUser(data) {
+    let res = await this.request('auth/token', data, "post");
     return res.token;
   }
 
   /* User update. Takes userdata and updates user profile. {data} */
   static async patchUser(username, data) {
-    let res = await this.request(`users/${username}`, { data }, "patch");
+    let res = await this.request(`users/${username}`, data, "patch");
     return res.user;
+  }
+
+  // Gets current User
+  static async getCurrentUser(username) {
+    let res = await this.request(`users/${username}`);
+    return res.user
   }
 
   // obviously, you'll add a lot here ...

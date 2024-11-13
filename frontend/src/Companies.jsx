@@ -21,11 +21,11 @@ const Companies = () => {
   if (!companies) return <LoadingSign />;
 
   return(
-    <div className="CompanyList col-md-8 offset-md-2">
+    <div className="CompanyList col-md-8 offset-md-2 mt-3">
       <SearchForm searchFor={search} />
       {companies.length
         ? (
-        <div className="CompanyList-list">
+        <div className="CompanyList-list mt-3">
         {companies.map(c => (
           <CompanyCard
             key={c.handle}
