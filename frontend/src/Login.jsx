@@ -38,7 +38,6 @@ const Login = ({ loginUser }) => {
       } catch(err){
         console.log(err)
       }
-      setFormData(INITIAL_STATE);
       setIsInvalid(true);
       setIsTouched(false);
     }

@@ -4,7 +4,11 @@ import './App.css'
 import background from "./assets/WoodBG.jpg"
 import NavBar from './NavBar'
 import RouteList from './RouteList';
-import * as decode from "jwt-decode";
+ // @ts-ignore  
+import { jwtDecode } from "jwt-decode"
+import LoadingSign from './common/LoadingSign'
+import useLocalStorageState from './hooks/useLocalStorageState'
+import UserContext from './UserContext'
 
 export const TOKEN_STORAGE = "react-token";
 
@@ -17,7 +21,8 @@ export const TOKEN_STORAGE = "react-token";
 
 function App() {
 
-  const [token, setToken] = useState(TOKEN_STORAGE);
+  const [token, setToken] = useLocalStorageState(TOKEN_STORAGE);
+  const [applicationIds, setApplicationIds] = useState(new Set([]))
   const [currentUser, setCurrentUser] = useState({
     data: null,
     infoLoaded: false
@@ -28,21 +33,27 @@ function App() {
       async function getCurrentUser() {
         if (token) {
           try {
-            let { username } = decode(token)
+            let { username } = jwtDecode(token)
+            console.log(username)
             JoblyApi.token = token;
             let currentUser = await JoblyApi.getCurrentUser(username);
             setCurrentUser({
               infoLoaded: true,
               data: currentUser
             });
+            console.log("**********************************");
+            console.log(token);
+            console.log("**********************************");
             setApplicationIds(new Set(currentUser.applications));
           } catch (err) {
+            console.log("ERR STATEMENT", err)
             setCurrentUser({
               data: null,
               infoLoaded: true,
             });
           }
         } else {
+          console.log("ELSE STATEMENT")
           setCurrentUser({
             infoLoaded: true,
             data: null
@@ -53,7 +64,55 @@ function App() {
       //Checks token change
     }, [token]);
 
+
+  // Signup funciton. Calls the signup request on our api and sets the current token to the user.
+  async function signupUser(signupData) {
+    let token = await JoblyApi.signUp(signupData);
+    setToken(token);
+  }
+
+  // login funciton. Calls the login request on our api and sets the current token to the user.
+  async function loginUser(loginData) {
+    const token = await JoblyApi.loginUser(loginData);
+    setToken(token);
+    console.log("Token set after loginUser", token);
+  }
+
+  // Handles logging out.
+  function logout() {
+    setApplicationIds(new Set([]));
+    setCurrentUser({
+      infoLoaded: true,
+      data: null
+    });
+    setToken(null);
+  }
+
+  /** Checks if a job has been applied for. */
+  function hasAppliedToJob(id) {
+    return applicationIds.has(id);
+  }
+
+  /** Apply to a job: make API call and update set of application IDs. */
+  function applyToJob(id) {
+    if (hasAppliedToJob(id)) return;
+    JoblyApi.applyToJob(currentUser.username, id);
+    setApplicationIds(new Set([...applicationIds, id]));
+  }
+
+  // Spinner display while loading or if it loads at all.
+  if (!currentUser.infoLoaded) return <LoadingSign />;
+  console.log(currentUser)
+  console.log(currentUser.data)
   return (
+    <UserContext.Provider
+      value={{
+        currentUser: currentUser.data,
+        setCurrentUser,
+        hasAppliedToJob,
+        applyToJob,
+      }}
+    >
     <div style={{backgroundImage: `url(${background})`,
                  backgroundRepeat: "no-repeat",
                  backgroundPosition: "center",
@@ -61,10 +120,11 @@ function App() {
                  backgroundAttachment: "fixed",
                  height: "100%"}}>
     <main>
-    <NavBar />
+    <NavBar logout={logout} />
       <RouteList currentUser={currentUser.data} loginUser={loginUser} signupUser={signupUser} ></RouteList>
     </main>
     </div>
+    </UserContext.Provider>
   )
 }
 

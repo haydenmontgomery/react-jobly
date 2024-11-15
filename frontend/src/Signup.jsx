@@ -7,8 +7,8 @@ const Signup = ({ signupUser }) => {
   const INITIAL_STATE = {
     username: "",
     password: "",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: ""
   }
 
@@ -17,7 +17,7 @@ const Signup = ({ signupUser }) => {
   const [isTouched, setIsTouched] = useState(false);
 
   //Once all forms input have been touched, it can submit unless the values are blank.
-  const handleChange = (e) => {
+  function handleChange(e) {
     setIsTouched(true);
     const { name, value } = e.target;
     if(value === '') {
@@ -32,25 +32,23 @@ const Signup = ({ signupUser }) => {
   }
 
   //Sends the form data to the parent component and hopefully authenticates.
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if(!isInvalid) {
+    //debugger
       try {
-        await signupUser({...formData});
+        await signupUser(formData);
         navigate("/companies")
       } catch(err){
         console.log(err)
       }
-      setFormData(INITIAL_STATE);
       setIsInvalid(true);
       setIsTouched(false);
-    }
   }
 
   return(
     <>
     <div className="Signup container" style={{height: "100vh"}}>
-      <p className="h1 text-center">Login</p>
+      <p className="h1 text-center">Signup</p>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">Username</label>
@@ -75,23 +73,23 @@ const Signup = ({ signupUser }) => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="first_name" className="form-label">First Name</label>
+          <label htmlFor="firstName" className="form-label">First Name</label>
           <input 
-          id="first_name"
+          id="firstName"
           type="text"
-          name="first_name"
-          value={formData.first_name}
+          name="firstName"
+          value={formData.firstName}
           onChange={handleChange}
           className="form-control"
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="last_name" className="form-label">Last Name</label>
+          <label htmlFor="lastName" className="form-label">Last Name</label>
           <input 
-          id="last_name"
+          id="lastName"
           type="text"
-          name="last_name"
-          value={formData.last_name}
+          name="lastName"
+          value={formData.lastName}
           onChange={handleChange}
           className="form-control"
           />
