@@ -8,7 +8,6 @@ import Jobs from "./Jobs";
 import Profile from "./Profile";
 
 function RouteList({ currentUser, loginUser, signupUser }) {
-  //console.log(currentUser)
   return (
     <Routes>
       {!currentUser && 
@@ -44,7 +43,7 @@ function RouteList({ currentUser, loginUser, signupUser }) {
         element={<Jobs />}
         />
         <Route 
-        path="/users/:username"
+        path="/profile"
         element={<Profile />}
         />
       </>

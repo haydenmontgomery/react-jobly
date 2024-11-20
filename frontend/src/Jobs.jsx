@@ -25,7 +25,7 @@ const Jobs = () => {
       <SearchForm searchFor={search} />
       {jobs.length
         ? <JobCardList jobs={jobs} />
-        : <p className="lead">Sorry, no results were found!</p>
+        : <p className="lead">Sorry, no match!</p>
     }
     </div>
   )

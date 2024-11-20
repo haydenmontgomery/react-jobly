@@ -34,16 +34,12 @@ function App() {
         if (token) {
           try {
             let { username } = jwtDecode(token)
-            console.log(username)
             JoblyApi.token = token;
             let currentUser = await JoblyApi.getCurrentUser(username);
             setCurrentUser({
               infoLoaded: true,
               data: currentUser
             });
-            console.log("**********************************");
-            console.log(token);
-            console.log("**********************************");
             setApplicationIds(new Set(currentUser.applications));
           } catch (err) {
             console.log("ERR STATEMENT", err)
@@ -75,7 +71,6 @@ function App() {
   async function loginUser(loginData) {
     const token = await JoblyApi.loginUser(loginData);
     setToken(token);
-    console.log("Token set after loginUser", token);
   }
 
   // Handles logging out.
@@ -96,14 +91,12 @@ function App() {
   /** Apply to a job: make API call and update set of application IDs. */
   function applyToJob(id) {
     if (hasAppliedToJob(id)) return;
-    JoblyApi.applyToJob(currentUser.username, id);
+    JoblyApi.applyToJob(currentUser.data.username, id);
     setApplicationIds(new Set([...applicationIds, id]));
   }
 
   // Spinner display while loading or if it loads at all.
   if (!currentUser.infoLoaded) return <LoadingSign />;
-  console.log(currentUser)
-  console.log(currentUser.data)
   return (
     <UserContext.Provider
       value={{
